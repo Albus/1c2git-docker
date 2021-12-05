@@ -1,9 +1,8 @@
-FROM golang:alpine as build
-RUN apk fix
-RUN apk --update add git git-lfs
+FROM golang:bullseye as build
 RUN go install github.com/LazarenkoA/1C2GIT@latest
 
-FROM alpine as production
-COPY --from=build /go/bin/1C2GIT /
-ENTRYPOINT ["/1C2GIT"]
+FROM albus/baseimage:nightly as production
+COPY --from=build /go/bin/1C2GIT /usr/local/bin/
+
+ENTRYPOINT ["/sbin/my_init","--","/usr/local/bin/1C2GIT"]
 CMD ["--help"]
